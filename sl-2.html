@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styled Calculator</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        .calculator {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .display {
+            background-color: #f9f9f9;
+            font-size: 1.5em;
+            padding: 10px;
+            text-align: right;
+            color: #333;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        button {
+            border: none;
+            padding: 15px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .number {
+            background-color: #4caf50;
+            color: #fff;
+        }
+
+        .operator {
+            background-color: #ff9800;
+            color: #fff;
+        }
+
+        .reset {
+            background-color: #2196f3;
+            color: #fff;
+        }
+
+        .clear {
+            background-color: #f44336;
+            color: #fff;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="number" onclick="appendNumber('7')">7</button>
+            <button class="number" onclick="appendNumber('8')">8</button>
+            <button class="number" onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="setOperator('+')">+</button>
+            <button class="number" onclick="appendNumber('4')">4</button>
+            <button class="number" onclick="appendNumber('5')">5</button>
+            <button class="number" onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="setOperator('-')">-</button>
+            <button class="number" onclick="appendNumber('1')">1</button>
+            <button class="number" onclick="appendNumber('2')">2</button>
+            <button class="number" onclick="appendNumber('3')">3</button>
+            <button class="operator" onclick="setOperator('*')">*</button>
+            <button class="number" onclick="appendNumber('0')">0</button>
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="reset" onclick="clearAll()">AC</button>
+            <button class="operator" onclick="setOperator('/')">/</button>
+            <button class="number" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let displayValue = '0';
+        let operator = '';
+        let firstOperand = '';
+        let waitingForSecondOperand = false;
+
+        function updateDisplay() {
+            document.getElementById('display').innerText = displayValue;
+        }
+
+        function appendNumber(number) {
+            if (waitingForSecondOperand) {
+                displayValue = number;
+                waitingForSecondOperand = false;
+            } else {
+                displayValue = displayValue === '0' ? number : displayValue + number;
+            }
+            updateDisplay();
+        }
+
+        function setOperator(op) {
+            if (operator && !waitingForSecondOperand) {
+                calculate();
+            }
+            operator = op;
+            firstOperand = displayValue;
+            waitingForSecondOperand = true;
+        }
+
+        function calculate() {
+            const a = parseFloat(firstOperand);
+            const b = parseFloat(displayValue);
+            if (isNaN(a) || isNaN(b) || !operator) {
+                clearAll();
+                return;
+            }
+            switch (operator) {
+                case '+':
+                    displayValue = (a + b).toString();
+                    break;
+                case '-':
+                    displayValue = (a - b).toString();
+                    break;
+                case '*':
+                    displayValue = (a * b).toString();
+                    break;
+                case '/':
+                    if (b !== 0) {
+                        displayValue = (a / b).toString();
+                    } else {
+                        displayValue = 'Error';
+                    }
+                    break;
+            }
+            operator = '';
+            waitingForSecondOperand = false;
+            updateDisplay();
+        }
+
+        function clearAll() {
+            displayValue = '0';
+            operator = '';
+            firstOperand = '';
+            waitingForSecondOperand = false;
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            displayValue = '0';
+            updateDisplay();
+        }
+
+        // Initialize the display
+        updateDisplay();
+    </script>
+</body>
+</html>
